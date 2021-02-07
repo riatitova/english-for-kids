@@ -1,0 +1,11 @@
+@use 'style';
+
+.win, .lose {
+    font-size: 2rem;
+    align-self: center;
+}
+.win-img, .lose-img {
+    width: 35rem;
+    height: 35rem;
+    align-self: center;
+}

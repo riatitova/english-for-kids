@@ -1,0 +1,40 @@
+@use 'style';
+
+.menu {
+  width: 20rem;
+  height: 90vh;
+  z-index: 3;
+  display: flex;
+  position: absolute;
+  left: -20rem;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: style.$color_purple;
+  color: style.$color_apricot;
+  transition: 0.5s ease;
+  &_visible {
+    left: 0;
+  }
+}
+
+.list {
+  text-decoration: none;
+  width: 80%;
+  height: 60%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  flex-direction: column;
+  &__item {
+    font-size: 2rem;
+  }
+  &__anchor {
+    text-decoration: none;
+    font-family: 'Main__font', cursive;
+    cursor: pointer;
+  }
+  &__anchor:hover {
+    color: style.$color_light_blue;
+  }
+}

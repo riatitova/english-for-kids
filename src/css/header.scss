@@ -1,0 +1,55 @@
+@use 'style';
+
+.header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: style.$color_dark_blue;
+    &__title {
+      color: style.$color_apricot;
+      cursor: pointer;
+      font-family: 'Main__font', cursive;
+    }
+    &__title:hover {
+      color: style.$color_light_blue;
+    }
+    &__play-button {
+      width: 10rem;
+      background-color: style.$color_apricot;
+      color: style.$color_light_blue; 
+      @include style.button();
+    }
+    &__train-button {
+      @include style.button();
+      width: 10rem;
+    }
+    &__statistics-button {
+      @include style.button();
+      width: 9rem;
+    }
+    &__menu-button {
+      margin: 1rem;
+      display: inline-block;
+      cursor: pointer;
+    }
+  }
+  
+  .burgerFirst,
+  .burgerSecond,
+  .burgerThird {
+    height: 0.4rem;
+    width: 3rem;
+    margin: 6px 0;
+    background-color: style.$color_apricot;
+    transition: 0.4s;
+  }
+  .changed.burgerFirst {
+    transform: rotate(-45deg) translate(-6px, 6px);
+  }
+  .changed.burgerSecond {
+    opacity: 0;
+  }
+  .changed.burgerThird {
+    transform: rotate(45deg) translate(-8px, -8px);
+  }

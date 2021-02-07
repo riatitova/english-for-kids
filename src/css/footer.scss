@@ -1,0 +1,28 @@
+@use 'style';
+
+.footer {
+    background-color: style.$color_dark_blue;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Main__font', cursive;
+    font-size: 1.6rem;
+    color: style.$color_apricot;
+    &__github {
+        text-decoration: none;
+    }
+    &__logo {
+        width: 10rem;
+        height: 5rem;
+    }
+    &__link {
+        text-decoration: none;
+    }
+    &__link:visited, &__github:visited{
+        color: style.$color_apricot;
+    }
+    &__link:hover, &__github:hover{
+        color: style.$color_light_blue;
+    }
+}
