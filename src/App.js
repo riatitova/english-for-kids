@@ -7,10 +7,23 @@ import Footer from './Footer';
 import Card from './Card';
 import Game from './Game';
 import * as storage from './storage';
-import win from './img/win.svg';
-import lose from './img/game-over.svg';
+import winImage from './img/win.svg';
+import loseImage from './img/game-over.svg';
 import createDOMElement from './createDOMElement';
 import Menu from './Menu';
+
+const win = 'win';
+const mainPage = 'main page';
+const play = 'play';
+const train = 'train';
+const en = 'en';
+const efkMode = 'efkMode';
+const efkCurrentCategory = 'efkCurrentCategory';
+const categories = 'categories';
+const waitingTime = 4000;
+const winImg = 'win-img';
+const lose = 'lose';
+const loseImg = 'lose-img';
 
 export default class App {
   constructor() {
@@ -32,16 +45,16 @@ export default class App {
     this.footer = new Footer();
     this.wonSound = new Audio('./audio/win.wav');
     this.loseSound = new Audio('./audio/lose.wav');
-    storage.set('efkMode', 'train');
+    storage.set(efkMode, train);
     this.renderCategories();
   }
 
   controlHeader(target) {
     switch (target) {
-      case 'main page':
+      case mainPage:
         this.switchToMain();
         break;
-      case 'play':
+      case play:
         this.startGame();
         break;
       default:
@@ -52,7 +65,7 @@ export default class App {
 
   controlMenu(target) {
     switch (target) {
-      case 'main page':
+      case mainPage:
         this.switchToMain();
         break;
       default:
@@ -63,73 +76,60 @@ export default class App {
 
   controlMain(newCategoryName) {
     this.mainContent.removeCards();
-    const currentPage = this.renderPage(newCategoryName);
-
-    return currentPage;
+    return this.renderPage(newCategoryName);
   }
 
   controlGame(state) {
-    switch (state) {
-      case 'win':
-        this.win();
-        break;
-      default:
-        this.lose(state);
+    if (state === win) {
+      this.win();
+    } else {
+      this.lose(state);
     }
   }
 
   renderCardsWords(categoryName) {
-    const words = this.cards.getCategoryWords(categoryName, 'en');
-    return words;
+    return this.cards.getCategoryWords(categoryName, en);
   }
 
   renderCardsImages(words, categoryName) {
-    const images = [];
-    words.map(value => images.push(this.cards.getImageForWord(categoryName, 'en', value)));
-    return images;
+    return words.map(value => this.cards.getImageForWord(categoryName, en, value));
   }
 
   renderCardsSounds(words, categoryName) {
-    const sounds = [];
-    words.map(value => sounds.push(this.cards.getAudioForWord(categoryName, 'en', value)));
-    return sounds;
+    return words.map(value => this.cards.getAudioForWord(categoryName, en, value));
   }
 
   renderCardsTranslations(words, categoryName) {
-    const translations = [];
-    words.map(value => translations.push(this.cards.getTranslation(categoryName, value)));
-    return translations;
+    return words.map(value => this.cards.getTranslation(categoryName, value));
   }
 
   renderPage(categoryName) {
-    const isPlayMode = storage.get('efkMode') === 'play';
+    const isPlayMode = storage.get(efkMode) === play;
 
     if (isPlayMode) {
-      storage.set('efkCurrentCategory', categoryName);
+      storage.set(efkCurrentCategory, categoryName);
       return this.startGame();
     }
-    const currentCards = [];
     const words = this.renderCardsWords(categoryName);
     const images = this.renderCardsImages(words, categoryName);
     const sounds = this.renderCardsSounds(words, categoryName);
     const translations = this.renderCardsTranslations(words, categoryName);
 
-    words.map((value, index) => currentCards.push(
-      new Card(value, this.mainContent.wrapper, translations[index]).renderCard(
-        images[index],
-        sounds[index],
-      ),
+    storage.set(efkCurrentCategory, categoryName);
+    return words.map((value, index) => new Card(
+      value, this.mainContent.wrapper, translations[index],
+    ).renderCard(
+      images[index],
+      sounds[index],
     ));
-    storage.set('efkCurrentCategory', categoryName);
-    return currentCards;
   }
 
   renderCategories() {
-    const categoriesImages = [];
-
-    this.categories.map(value => categoriesImages.push(this.cards.getCategoryImage(value)));
-    this.mainContent.setCards(this.categories, categoriesImages);
-    storage.set('efkCurrentCategory', 'categories');
+    this.mainContent.setCards(
+      this.categories,
+      this.categories.map(value => this.cards.getCategoryImage(value)),
+    );
+    storage.set(efkCurrentCategory, categories);
     return this.mainContent;
   }
 
@@ -141,18 +141,18 @@ export default class App {
 
   switchToCategory(category) {
     this.mainContent.removeCards();
-    const isPlayMode = storage.get('efkMode') === 'play';
+    const isPlayMode = storage.get(efkMode) === play;
     if (isPlayMode) {
-      storage.set('efkCurrentCategory', category);
+      storage.set(efkCurrentCategory, category);
       return this.startGame();
     }
     return this.renderPage(category);
   }
 
   startGame() {
-    const currentCategory = storage.get('efkCurrentCategory');
-    const isCategoriesPage = currentCategory === 'categories';
-    storage.set('efkMode', 'play');
+    const currentCategory = storage.get(efkCurrentCategory);
+    const isCategoriesPage = currentCategory === categories;
+    storage.set(efkMode, play);
 
     if (!isCategoriesPage) {
       this.mainContent.removeCards();
@@ -171,12 +171,12 @@ export default class App {
   }
 
   train() {
-    const isPlayMode = storage.get('efkMode') === 'play';
-    const currentCategory = storage.get('efkCurrentCategory');
-    const isCategoriesPage = currentCategory === 'categories';
+    const isPlayMode = storage.get(efkMode) === play;
+    const currentCategory = storage.get(efkCurrentCategory);
+    const isCategoriesPage = currentCategory === categories;
 
     if (isPlayMode) {
-      storage.set('efkMode', 'train');
+      storage.set(efkMode, train);
       return isCategoriesPage ? this.switchToMain() : this.switchToCategory(currentCategory);
     }
     return currentCategory;
@@ -184,21 +184,21 @@ export default class App {
 
   win() {
     this.mainContent.removeCards();
-    createDOMElement('span', 'win', 'You won', this.mainContent.wrapper);
-    createDOMElement('img', 'win-img', null, this.mainContent.wrapper, ['src', `${win}`]);
+    createDOMElement('span', win, 'You won', this.mainContent.wrapper);
+    createDOMElement('img', winImg, null, this.mainContent.wrapper, ['src', `${winImage}`]);
     this.wonSound.play();
     setTimeout(() => {
       this.switchToMain();
-    }, 4000);
+    }, waitingTime);
   }
 
   lose(mistakes) {
     this.mainContent.removeCards();
-    createDOMElement('span', 'lose', `You have ${mistakes} mistakes`, this.mainContent.wrapper);
-    createDOMElement('img', 'lose-img', null, this.mainContent.wrapper, ['src', `${lose}`]);
+    createDOMElement('span', lose, `You have ${mistakes} mistakes`, this.mainContent.wrapper);
+    createDOMElement('img', loseImg, null, this.mainContent.wrapper, ['src', `${loseImage}`]);
     this.loseSound.play();
     setTimeout(() => {
       this.switchToMain();
-    }, 4000);
+    }, waitingTime);
   }
 }
